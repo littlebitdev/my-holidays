@@ -26,7 +26,7 @@ jobs:
           # 아래 줄을 자유롭게 추가/수정하세요.
           # 형식: sed -i 's/원래이름/바꿀이름/g' holidays.ics
           sed -i 's/기독탄신일/크리스마스/g' holidays.ics
-          sed -i 's/부처님오신날/석가탄신일/g' holidays.ics
+          sed -i 's/부처님 오신 날/석가탄신일/g' holidays.ics
 
       - name: 변경사항이 있으면 커밋 및 푸시
         run: |
