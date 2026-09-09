@@ -1,0 +1,41 @@
+name: Update Korean Holidays Calendar
+
+# 실행 시점 설정
+on:
+  schedule:
+    # 매년 1월 1일, 7월 1일 자정(UTC 기준)에 자동 실행
+    # 원하는 주기로 자유롭게 수정 가능 (아래 "주기 변경 방법" 참고)
+    - cron: '0 0 1 * *'
+  workflow_dispatch: {}   # Actions 탭에서 "Run workflow" 버튼으로 수동 실행 가능
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # 저장소에 커밋/푸시하기 위한 권한
+
+    steps:
+      - name: 저장소 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 최신 공휴일 ics 다운로드
+        run: curl -sL https://holidays.hyunbin.page/basic.ics -o holidays.ics
+
+      - name: 원하는 이름으로 치환
+        run: |
+          # 아래 줄을 자유롭게 추가/수정하세요.
+          # 형식: sed -i 's/원래이름/바꿀이름/g' holidays.ics
+          sed -i 's/기독탄신일/크리스마스/g' holidays.ics
+          sed -i 's/부처님오신날/석가탄신일/g' holidays.ics
+
+      - name: 변경사항이 있으면 커밋 및 푸시
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add holidays.ics
+          if git diff --cached --quiet; then
+            echo "변경된 내용이 없습니다."
+          else
+            git commit -m "공휴일 캘린더 자동 업데이트 ($(date +'%Y-%m-%d'))"
+            git push
+          fi
